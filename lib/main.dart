@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pages/page1.dart';
 import 'pages/page2.dart';
+import 'pages/upcomingEventsPage.dart';
 import 'pages/page3.dart';
 import 'pages/page4.dart';
 
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Page1(),
+    Upcomingeventspage(),
     Page2(),
     Page3(),
     Page4(),
@@ -49,8 +49,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar : BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.music_note),
+            label: 'Events',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
