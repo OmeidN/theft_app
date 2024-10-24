@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'pages/page2.dart';
-import 'pages/upcomingEventsPage.dart';
+import 'pages/upcomingEventsPage.dart'; // Correct import with the right class name
 import 'pages/page3.dart';
 import 'pages/page4.dart';
 
 void main() { 
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,21 +13,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      home: HomePage(),
+      home: UpcomingEventsHome(), // Use the main page that includes navigation
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class UpcomingEventsHome extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _UpcomingEventsHomeState createState() => _UpcomingEventsHomeState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _UpcomingEventsHomeState extends State<UpcomingEventsHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Upcomingeventspage(),
+    Upcomingeventspage(), // Main events page
     Page2(),
     Page3(),
     Page4(),
@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Theft App'),
       ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar : BottomNavigationBar(
+      body: _pages[_selectedIndex], // Display the selected page
+      bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.music_note),
@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.white,
         backgroundColor: Colors.black,
-        onTap: _onItemTapped,
+        onTap: _onItemTapped, // Handle item taps
       ),
     );
   }
