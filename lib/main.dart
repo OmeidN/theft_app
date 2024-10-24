@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/page2.dart';
-import 'pages/upcomingEventsPage.dart'; // Correct import with the right class name
+import 'pages/upcomingEventsPage.dart';
 import 'pages/page3.dart';
 import 'pages/page4.dart';
 
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      home: UpcomingEventsHome(), // Use the main page that includes navigation
+      home: UpcomingEventsHome(),
     );
   }
 }
@@ -27,19 +27,17 @@ class _UpcomingEventsHomeState extends State<UpcomingEventsHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Upcomingeventspage(), // Main events page
+    UpcomingEventsPage(),
     Page2(),
     Page3(),
     Page4(),
   ];
 
-void _onItemTapped(int index) {
-  print('Tapped index: $index'); // Debugging line
-  setState(() {
-    _selectedIndex = index; // Update the selected index
-  });
-}
-
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +45,7 @@ void _onItemTapped(int index) {
       appBar: AppBar(
         title: Text('Theft App'),
       ),
-      body: _pages[_selectedIndex], // Display the selected page
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -71,7 +69,7 @@ void _onItemTapped(int index) {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.white,
         backgroundColor: Colors.black,
-        onTap: _onItemTapped, // Handle item taps
+        onTap: _onItemTapped,
       ),
     );
   }
