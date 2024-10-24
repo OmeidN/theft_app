@@ -33,11 +33,13 @@ class _UpcomingEventsHomeState extends State<UpcomingEventsHome> {
     Page4(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+void _onItemTapped(int index) {
+  print('Tapped index: $index'); // Debugging line
+  setState(() {
+    _selectedIndex = index; // Update the selected index
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
