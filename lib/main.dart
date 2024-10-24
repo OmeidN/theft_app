@@ -27,7 +27,7 @@ class _UpcomingEventsHomeState extends State<UpcomingEventsHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Upcomingeventspage(), // Main events page
+    UpcomingEventsPage(), // Main events page
     Page2(),
     Page3(),
     Page4(),
