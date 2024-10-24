@@ -43,29 +43,53 @@ class EventButton extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.all(16.0),
-          backgroundColor: Colors.blue, // Customize your button color
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              eventName,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              '$eventDate at $eventTime',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
+Widget build(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.all(16.0),
+        backgroundColor: Colors.blue,
       ),
-    );
-  }
+      child: Padding(
+        padding: const EdgeInsets.only(right: 80),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 40), // Adjust this padding
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRniXJpNK2UFfsnkP5DV1it6CaTzv32lpvSPA&s',
+                height: 50,
+                width: 50,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.error);
+                },
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                eventName,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '$eventDate at $eventTime',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+    ),
+  );
+}
 }
