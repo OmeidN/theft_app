@@ -28,17 +28,25 @@ class UpcomingEventsPage extends StatelessWidget {
     ),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Upcoming Events'),
-      ),
-      body: ListView(
-        children: events.map((event) => _createEventButton(context, event)).toList(),
-      ),
-    );
-  }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Upcoming Events'),
+    ),
+    body: ListView(
+      children: events.map((event) {
+        return Column( // Use Column to add spacing
+          children: [
+            _createEventButton(context, event),
+            const SizedBox(height: 10.0), // Space between buttons
+          ],
+        );
+      }).toList(),
+    ),
+  );
+}
+
 
   ElevatedButton _createEventButton(BuildContext context, Event event) {
     return ElevatedButton(
