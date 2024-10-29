@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:theft_app/mapPages/MapPageParent.dart';
 
@@ -30,17 +32,10 @@ class UpcomingEventsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upcoming Events'),
+        title: const Text('Upcoming Events'),
       ),
       body: ListView(
-        children: events.map((event) {
-          return Column(
-            children: [
-              _createEventButton(context, event),
-              const SizedBox(height: 10), 
-            ],
-          );
-        }).toList(),
+        children: events.map((event) => _createEventButton(context, event)).toList(),
       ),
     );
   }
@@ -56,7 +51,7 @@ class UpcomingEventsPage extends StatelessWidget {
         );
       },
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         backgroundColor: Colors.blue,
       ),
       child: Row(
@@ -70,16 +65,16 @@ class UpcomingEventsPage extends StatelessWidget {
               width: 50,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Icon(Icons.error);
+                return const Icon(Icons.error);
               },
             ),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(event.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text('${event.date} at ${event.time}', style: TextStyle(fontSize: 16)),
+              Text(event.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('${event.date} at ${event.time}', style: const TextStyle(fontSize: 16)),
             ],
           ),
         ],
