@@ -16,8 +16,8 @@ class MapPageParent extends StatefulWidget {
 
 class _MapPageParentState extends State<MapPageParent> {
   List<Offset> pinPositions = [];
-  bool canPlacePin = false; // Flag to determine if pins can be placed
-  bool isBlackAndWhite = false; // Flag to toggle map color
+  bool canPlacePin = false;
+  bool isBlackAndWhite = false;
 
   void _addPin(Offset position) {
     setState(() {
@@ -30,19 +30,19 @@ class _MapPageParentState extends State<MapPageParent> {
       );
 
       pinPositions.add(adjustedPosition);
-      canPlacePin = false; // Reset the flag after placing a pin
+      canPlacePin = false;
     });
   }
 
   void _togglePinPlacement() {
     setState(() {
-      canPlacePin = !canPlacePin; // Toggle the ability to place a pin
+      canPlacePin = !canPlacePin;
     });
   }
 
   void _toggleMapColor() {
     setState(() {
-      isBlackAndWhite = !isBlackAndWhite; // Toggle map between color and black and white
+      isBlackAndWhite = !isBlackAndWhite;
     });
   }
 
@@ -65,36 +65,19 @@ class _MapPageParentState extends State<MapPageParent> {
         alignment: Alignment.center,
         children: [
           GestureDetector(
-            onTapDown: canPlacePin
-                ? (details) {
-                    _addPin(details.localPosition);
-                  }
-                : null, // Only allow tap if canPlacePin is true
+            onTapDown: canPlacePin ? (details) => _addPin(details.localPosition) : null,
             child: ColorFiltered(
               colorFilter: isBlackAndWhite
-                  ? ColorFilter.mode(
-                      Colors.grey,
-                      BlendMode.saturation,
-                    )
-                  : ColorFilter.mode(
-                      Colors.transparent,
-                      BlendMode.multiply,
-                    ),
-              child: Image.network(
-                widget.mapUrl,
-                fit: BoxFit.cover,
-              ),
+                  ? ColorFilter.mode(Colors.grey, BlendMode.saturation)
+                  : ColorFilter.mode(Colors.transparent, BlendMode.multiply),
+              child: Image.network(widget.mapUrl, fit: BoxFit.cover),
             ),
           ),
           ...pinPositions.map((position) {
             return Positioned(
               left: position.dx,
               top: position.dy,
-              child: Icon(
-                Icons.pin_drop,
-                color: Colors.red,
-                size: 30,
-              ),
+              child: Icon(Icons.pin_drop, color: Colors.red, size: 30),
             );
           }).toList(),
         ],
