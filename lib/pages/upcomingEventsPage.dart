@@ -33,7 +33,14 @@ class UpcomingEventsPage extends StatelessWidget {
         title: Text('Upcoming Events'),
       ),
       body: ListView(
-        children: events.map((event) => _createEventButton(context, event)).toList(),
+        children: events.map((event) {
+          return Column(
+            children: [
+              _createEventButton(context, event),
+              const SizedBox(height: 10), 
+            ],
+          );
+        }).toList(),
       ),
     );
   }
