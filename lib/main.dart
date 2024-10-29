@@ -32,9 +32,9 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     UpcomingEventsPage(), 
-    Page2(),
-    Page3(),
-    Page4(),
+    const Page2(),
+    const Page3(),
+    const Page4(),
   ];
 
   void _onItemTapped(int index) {

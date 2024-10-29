@@ -28,6 +28,8 @@ class UpcomingEventsPage extends StatelessWidget {
     ),
   ];
 
+  UpcomingEventsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
