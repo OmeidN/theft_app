@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 class MapPageParent extends StatefulWidget {
@@ -5,10 +7,10 @@ class MapPageParent extends StatefulWidget {
   final String mapUrl;
 
   const MapPageParent({
-    Key? key,
+    super.key,
     required this.eventName,
     required this.mapUrl,
-  }) : super(key: key);
+  });
 
   @override
   _MapPageParentState createState() => _MapPageParentState();
@@ -56,7 +58,7 @@ class _MapPageParentState extends State<MapPageParent> {
             onPressed: _togglePinPlacement,
             child: Text(
               canPlacePin ? 'Cancel Pin' : 'Report a phone theft',
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -68,8 +70,8 @@ class _MapPageParentState extends State<MapPageParent> {
             onTapDown: canPlacePin ? (details) => _addPin(details.localPosition) : null,
             child: ColorFiltered(
               colorFilter: isBlackAndWhite
-                  ? ColorFilter.mode(Colors.grey, BlendMode.saturation)
-                  : ColorFilter.mode(Colors.transparent, BlendMode.multiply),
+                  ? const ColorFilter.mode(Colors.grey, BlendMode.saturation)
+                  : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
               child: Image.network(widget.mapUrl, fit: BoxFit.cover),
             ),
           ),
@@ -77,9 +79,9 @@ class _MapPageParentState extends State<MapPageParent> {
             return Positioned(
               left: position.dx,
               top: position.dy,
-              child: Icon(Icons.pin_drop, color: Colors.red, size: 30),
+              child: const Icon(Icons.pin_drop, color: Colors.red, size: 30),
             );
-          }).toList(),
+          }),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
