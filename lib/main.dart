@@ -8,7 +8,7 @@ import 'pages/page3.dart';
 import 'pages/loginPage.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
