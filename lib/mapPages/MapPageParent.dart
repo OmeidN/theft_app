@@ -31,8 +31,9 @@ class _MapPageParentState extends State<MapPageParent> {
         position.dy - pinHeight / 2,
       );
 
+      // Add new pin
       pinPositions.add(adjustedPosition);
-      canPlacePin = false;
+      canPlacePin = false; // Disable pin placement mode after adding a pin
     });
   }
 
@@ -79,7 +80,15 @@ class _MapPageParentState extends State<MapPageParent> {
             return Positioned(
               left: position.dx,
               top: position.dy,
-              child: const Icon(Icons.pin_drop, color: Colors.red, size: 30),
+              child: GestureDetector(
+                onTap: () {
+                  // Remove pin on tap
+                  setState(() {
+                    pinPositions.remove(position);
+                  });
+                },
+                child: const Icon(Icons.pin_drop, color: Colors.red, size: 30),
+              ),
             );
           }),
         ],
