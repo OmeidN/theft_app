@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/upcomingEventsPage.dart';
-import 'pages/page2.dart';
+import 'pages/searchPage.dart';
 import 'pages/page3.dart';
 import 'pages/loginPage.dart';
 
@@ -32,7 +32,7 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     UpcomingEventsPage(), 
-    const Page2(),
+    const SearchPage(),
     const Page3(),
     const LoginPage(),
   ];
