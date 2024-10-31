@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class MapPageParent extends StatefulWidget {
   final String eventName;
   final String mapUrl;
+  final List<Offset>? initialPins;
 
   const MapPageParent({
     super.key,
     required this.eventName,
     required this.mapUrl,
+    this.initialPins,
   });
 
   @override
@@ -21,6 +23,15 @@ class _MapPageParentState extends State<MapPageParent> {
   bool canPlacePin = false;
   bool isBlackAndWhite = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize pin positions with the provided list if available
+    if (widget.initialPins != null) {
+      pinPositions = List.from(widget.initialPins!);
+    }
+  }
+
   void _addPin(Offset position) {
     setState(() {
       const double pinWidth = 30.0;
@@ -31,7 +42,6 @@ class _MapPageParentState extends State<MapPageParent> {
         position.dy - pinHeight / 2,
       );
 
-      // Add new pin
       pinPositions.add(adjustedPosition);
       canPlacePin = false; // Disable pin placement mode after adding a pin
     });
@@ -98,7 +108,10 @@ class _MapPageParentState extends State<MapPageParent> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            onPressed: _toggleMapColor,
+            onPressed: () {
+              // Return the pin positions when navigating back
+              Navigator.pop(context, pinPositions);
+            },
             child: Text(isBlackAndWhite ? 'Switch to Color Map' : 'Switch to Black & White Map'),
           ),
         ),

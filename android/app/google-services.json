@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "153266173349",
+    "project_id": "theftapp-40e59",
+    "storage_bucket": "theftapp-40e59.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153266173349:android:80798e524f49469713a44c",
+        "android_client_info": {
+          "package_name": "com.example.theft_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTaXjC21DItDN0C89Z_p95s1agDuOjkh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
