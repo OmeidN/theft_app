@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'pages/upcomingEventsPage.dart';
 import 'pages/page2.dart';
 import 'pages/page3.dart';
-import 'pages/page4.dart';
+import 'pages/loginPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +34,7 @@ class _MainPageState extends State<MainPage> {
     UpcomingEventsPage(), 
     const Page2(),
     const Page3(),
-    const Page4(),
+    const LoginPage(),
   ];
 
   void _onItemTapped(int index) {
