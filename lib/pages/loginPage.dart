@@ -12,6 +12,7 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController(); // Add username controller
   bool _isLogin = true; // Toggle between login and sign-up
 
   Future<void> _handleAuth() async {
@@ -24,10 +25,19 @@ class _LoginPageState extends State<LoginPage> {
         );
       } else {
         // Register a new user
-        await _auth.createUserWithEmailAndPassword(
+        // You can use Firestore or another method to store the username
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
+        
+        // After creating the account, store the username in Firestore (or Firebase Realtime Database)
+        await userCredential.user?.updateDisplayName(_usernameController.text); // Update the username
+
+        // Optionally, you can also store the username in Firestore for easy retrieval
+        // FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).set({
+        //   'username': _usernameController.text,
+        // });
       }
       // If login or sign-up is successful, navigate to the main app
       Navigator.pushReplacementNamed(context, '/');
@@ -53,6 +63,11 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            if (!_isLogin)
+              TextField(
+                controller: _usernameController,
+                decoration: const InputDecoration(labelText: 'Username'),
+              ),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
