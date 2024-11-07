@@ -5,6 +5,9 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    User? user = FirebaseAuth.instance.currentUser;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -34,13 +37,18 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            Text(
-              'Email: ' ,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+             user != null
+                ? Text(
+                    'Email: ${user.email}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                   : const Text(
+                    'No user logged in',
+                    style: TextStyle(fontSize: 18),
+                  ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
