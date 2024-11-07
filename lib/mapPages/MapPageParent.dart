@@ -108,10 +108,7 @@ class _MapPageParentState extends State<MapPageParent> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            onPressed: () {
-              // Return the pin positions when navigating back
-              Navigator.pop(context, pinPositions);
-            },
+            onPressed: _toggleMapColor,
             child: Text(isBlackAndWhite ? 'Switch to Color Map' : 'Switch to Black & White Map'),
           ),
         ),
