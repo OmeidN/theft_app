@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:theft_app/main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -13,7 +12,8 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController(); // Add username controller
+  final TextEditingController _usernameController =
+      TextEditingController(); // Add username controller
   bool _isLogin = true; // Toggle between login and sign-up
 
   Future<void> _handleAuth() async {
@@ -27,13 +27,15 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         // Register a new user
         // You can use Firestore or another method to store the username
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        
+
         // After creating the account, store the username in Firestore (or Firebase Realtime Database)
-        await userCredential.user?.updateDisplayName(_usernameController.text); // Update the username
+        await userCredential.user?.updateDisplayName(
+            _usernameController.text); // Update the username
 
         // Optionally, you can also store the username in Firestore for easy retrieval
         // FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).set({
@@ -87,7 +89,8 @@ class _LoginPageState extends State<LoginPage> {
                   _isLogin = !_isLogin;
                 });
               },
-              child: Text(_isLogin ? 'Create an Account' : 'Have an Account? Log In'),
+              child: Text(
+                  _isLogin ? 'Create an Account' : 'Have an Account? Log In'),
             ),
           ],
         ),

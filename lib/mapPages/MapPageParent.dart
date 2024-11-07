@@ -78,11 +78,14 @@ class _MapPageParentState extends State<MapPageParent> {
         alignment: Alignment.center,
         children: [
           GestureDetector(
-            onTapDown: canPlacePin ? (details) => _addPin(details.localPosition) : null,
+            onTapDown: canPlacePin
+                ? (details) => _addPin(details.localPosition)
+                : null,
             child: ColorFiltered(
               colorFilter: isBlackAndWhite
                   ? const ColorFilter.mode(Colors.grey, BlendMode.saturation)
-                  : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
+                  : const ColorFilter.mode(
+                      Colors.transparent, BlendMode.multiply),
               child: Image.network(widget.mapUrl, fit: BoxFit.cover),
             ),
           ),
@@ -109,7 +112,9 @@ class _MapPageParentState extends State<MapPageParent> {
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
             onPressed: _toggleMapColor,
-            child: Text(isBlackAndWhite ? 'Switch to Color Map' : 'Switch to Black & White Map'),
+            child: Text(isBlackAndWhite
+                ? 'Switch to Color Map'
+                : 'Switch to Black & White Map'),
           ),
         ),
       ),
