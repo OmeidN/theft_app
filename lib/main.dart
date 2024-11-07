@@ -6,6 +6,7 @@ import 'pages/upcomingEventsPage.dart';
 import 'pages/searchPage.dart';
 import 'pages/page3.dart';
 import 'pages/loginPage.dart';
+import 'pages/profilePage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
+      
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -52,7 +54,7 @@ class _MainPageState extends State<MainPage> {
     UpcomingEventsPage(),
     const SearchPage(),
     const Page3(),
-    const LoginPage(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

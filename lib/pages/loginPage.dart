@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:theft_app/main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -29,8 +30,6 @@ class _LoginPageState extends State<LoginPage> {
           password: _passwordController.text,
         );
       }
-      // If login or sign-up is successful, navigate to the main app
-      Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       // Display an error message if authentication fails
       showDialog(
