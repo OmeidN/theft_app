@@ -15,10 +15,10 @@ class MapPageParent extends StatefulWidget {
   });
 
   @override
-  _MapPageParentState createState() => _MapPageParentState();
+  MapPageParentState createState() => MapPageParentState();
 }
 
-class _MapPageParentState extends State<MapPageParent> {
+class MapPageParentState extends State<MapPageParent> {
   List<Offset> pinPositions = [];
   bool canPlacePin = false;
   bool isBlackAndWhite = false;
