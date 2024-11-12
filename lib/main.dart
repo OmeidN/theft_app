@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
-import 'pages/upcomingEventsPage.dart';
-import 'pages/searchPage.dart';
+import 'pages/upcoming_events_page.dart';
+import 'pages/search_page.dart';
 import 'pages/page3.dart';
-import 'pages/loginPage.dart';
-import 'pages/profilePage.dart';
+import 'pages/login_page.dart';
+import 'pages/profile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

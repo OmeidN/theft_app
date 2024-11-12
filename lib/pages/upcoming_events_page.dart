@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:theft_app/mapPages/MapPageParent.dart';
+import 'package:theft_app/mapPages/map_page_parent.dart';
 
 class UpcomingEventsPage extends StatelessWidget {
   final List<Event> events;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:theft_app/mapPages/MapPageParent.dart';
-import 'upcomingEventsPage.dart';
+import 'package:theft_app/mapPages/map_page_parent.dart';
+import 'upcoming_events_page.dart';
 
 class SearchPage extends StatefulWidget {
   final List<Event> events;
