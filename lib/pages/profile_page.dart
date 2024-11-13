@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+  
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
@@ -54,7 +59,7 @@ class ProfilePage extends StatelessWidget {
     try {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
-      print("Logout failed: $e");
+      logger.e("Logout failed", e);
     }
   }
 }

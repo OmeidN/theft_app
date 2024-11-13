@@ -4,7 +4,7 @@ import 'package:theft_app/mapPages/map_page_parent.dart';
 class UpcomingEventsPage extends StatelessWidget {
   final List<Event> events;
 
-  UpcomingEventsPage({super.key, required this.events});
+  const UpcomingEventsPage({super.key, required this.events});
 
   @override
   Widget build(BuildContext context) {

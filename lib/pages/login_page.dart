@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   LoginPageState createState() => LoginPageState();
@@ -44,6 +44,7 @@ class LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       // Display an error message if authentication fails
+      if (!mounted) return;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

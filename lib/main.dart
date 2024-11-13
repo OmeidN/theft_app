@@ -87,7 +87,7 @@ class MainPageState extends State<MainPage> {
       UpcomingEventsPage(events: events),
       SearchPage(events: events),
       const Page3(),
-      ProfilePage(),
+      const ProfilePage(),
     ];
   }
 

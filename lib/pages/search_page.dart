@@ -5,7 +5,7 @@ import 'upcoming_events_page.dart';
 class SearchPage extends StatefulWidget {
   final List<Event> events;
 
-  SearchPage({Key? key, required this.events}) : super(key: key);
+  const SearchPage({super.key, required this.events});
 
   @override
   SearchPageState createState() => SearchPageState();
