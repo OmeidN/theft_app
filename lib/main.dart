@@ -7,14 +7,26 @@ import 'pages/search_page.dart';
 import 'pages/page3.dart';
 import 'pages/login_page.dart';
 import 'pages/profile_page.dart';
+import 'package:logger/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  var logger = Logger();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    logger.e('Firebase failed to initialize');
+  }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
+
+// Stateless MyApp, Firebase get users and setup auth
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -39,6 +51,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Stateful MainPage
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -50,6 +64,8 @@ class MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   late List<Widget> _pages;
+
+  // Master event list (all other classes that need it are passed this from main)
 
   final List<Event> events = [
     Event(
@@ -80,6 +96,8 @@ class MainPageState extends State<MainPage> {
     ),
   ];
 
+  // Pages with index selector
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +114,8 @@ class MainPageState extends State<MainPage> {
       _selectedIndex = index;
     });
   }
+
+  // Bottom Navigation Bar
 
   @override
   Widget build(BuildContext context) {
