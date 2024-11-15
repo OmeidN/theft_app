@@ -1,90 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:theft_app/event_data.dart'; // Import the global events list
 import 'package:theft_app/mapPages/map_page_parent.dart';
 
-class UpcomingEventsPage extends StatelessWidget {
-  final List<Event> events;
+class UpcomingEventsPage extends StatefulWidget {
+  const UpcomingEventsPage({Key? key}) : super(key: key);
 
-  const UpcomingEventsPage({super.key, required this.events});
+  @override
+  _UpcomingEventsPageState createState() => _UpcomingEventsPageState();
+}
+
+class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
+  List<Event> importedEvents = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImportedEvents();
+  }
+
+  // Load imported events from Firestore for the current user
+  Future<void> _loadImportedEvents() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    final userDocRef = FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    final docSnapshot = await userDocRef.get();
+
+    if (docSnapshot.exists) {
+      final eventNames = List<String>.from(docSnapshot['importedEvents']);
+      setState(() {
+        importedEvents = eventNames
+            .map((name) => events.firstWhere((e) => e.name == name)) // Use global 'events' list
+            .toList();
+      });
+    }
+  }
+
+  // Remove an event from the imported list
+  Future<void> _removeEvent(Event event) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    final userDocRef = FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    await userDocRef.update({
+      'importedEvents': FieldValue.arrayRemove([event.name]),
+    });
+
+    setState(() {
+      importedEvents.remove(event);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${event.name} has been removed from your upcoming events.')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            children: events.map((event) {
-              return Column(
-                children: [
-                  _createEventButton(context, event),
-                  const SizedBox(height: 10),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  ElevatedButton _createEventButton(BuildContext context, Event event) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                MapPageParent(eventName: event.name, mapUrl: event.mapUrl),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16.0),
-        backgroundColor: Colors.blue,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Upcoming Events'),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              event.logoUrl,
-              height: 50,
-              width: 50,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.error);
+      body: importedEvents.isEmpty
+          ? const Center(child: Text("No events imported yet."))
+          : ListView.builder(
+              itemCount: importedEvents.length,
+              itemBuilder: (context, index) {
+                final event = importedEvents[index];
+                return ListTile(
+                  title: Text(event.name),
+                  subtitle: Text('${event.date} at ${event.time}'),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      event.logoUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error);
+                      },
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeEvent(event),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapPageParent(
+                          eventName: event.name,
+                          mapUrl: event.mapUrl,
+                          readonly: false,
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             ),
-          ),
-          const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(event.name,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
-              Text('${event.date} at ${event.time}',
-                  style: const TextStyle(fontSize: 16)),
-            ],
-          ),
-        ],
-      ),
     );
   }
-}
-
-class Event {
-  final String name;
-  final String date;
-  final String time;
-  final String logoUrl;
-  final String mapUrl;
-
-  Event({
-    required this.name,
-    required this.date,
-    required this.time,
-    required this.logoUrl,
-    required this.mapUrl,
-  });
 }

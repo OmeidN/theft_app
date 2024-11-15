@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:theft_app/mapPages/map_page_parent.dart';
-import 'upcoming_events_page.dart';
+import 'package:theft_app/event_data.dart';
+import 'package:theft_app/pages/event_details_page.dart';
 
 class SearchPage extends StatefulWidget {
   final List<Event> events;
@@ -64,13 +64,11 @@ class SearchPageState extends State<SearchPage> {
                       horizontal: 8.0, vertical: 4.0),
                   child: ElevatedButton(
                     onPressed: () {
+                      // Navigate to EventDetailsPage for import functionality
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MapPageParent(
-                            eventName: event.name,
-                            mapUrl: event.mapUrl,
-                          ),
+                          builder: (context) => EventDetailsPage(event: event),
                         ),
                       );
                     },

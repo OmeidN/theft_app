@@ -1,18 +1,18 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 
 class MapPageParent extends StatefulWidget {
   final String eventName;
   final String mapUrl;
   final List<Offset>? initialPins;
+  final bool readonly; // Add readonly parameter to control interactivity
 
   const MapPageParent({
-    super.key,
+    Key? key,
     required this.eventName,
     required this.mapUrl,
     this.initialPins,
-  });
+    this.readonly = false, // Default to false for interactive mode
+  }) : super(key: key);
 
   @override
   MapPageParentState createState() => MapPageParentState();
@@ -26,13 +26,13 @@ class MapPageParentState extends State<MapPageParent> {
   @override
   void initState() {
     super.initState();
-    // Initialize pin positions with the provided list if available
     if (widget.initialPins != null) {
       pinPositions = List.from(widget.initialPins!);
     }
   }
 
   void _addPin(Offset position) {
+    if (widget.readonly) return; // Prevent adding pins in read-only mode
     setState(() {
       const double pinWidth = 30.0;
       const double pinHeight = 30.0;
@@ -43,17 +43,19 @@ class MapPageParentState extends State<MapPageParent> {
       );
 
       pinPositions.add(adjustedPosition);
-      canPlacePin = false; // Disable pin placement mode after adding a pin
+      canPlacePin = false;
     });
   }
 
   void _togglePinPlacement() {
+    if (widget.readonly) return; // Prevent enabling pin placement in read-only mode
     setState(() {
       canPlacePin = !canPlacePin;
     });
   }
 
   void _toggleMapColor() {
+    if (widget.readonly) return; // Prevent color toggle in read-only mode
     setState(() {
       isBlackAndWhite = !isBlackAndWhite;
     });
@@ -65,20 +67,21 @@ class MapPageParentState extends State<MapPageParent> {
       appBar: AppBar(
         title: Text(widget.eventName),
         actions: [
-          TextButton(
-            onPressed: _togglePinPlacement,
-            child: Text(
-              canPlacePin ? 'Cancel Pin' : 'Report a phone theft',
-              style: const TextStyle(color: Colors.white),
+          if (!widget.readonly)
+            TextButton(
+              onPressed: _togglePinPlacement,
+              child: Text(
+                canPlacePin ? 'Cancel Pin' : 'Report a phone theft',
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
-          ),
         ],
       ),
       body: Stack(
         alignment: Alignment.center,
         children: [
           GestureDetector(
-            onTapDown: canPlacePin
+            onTapDown: canPlacePin && !widget.readonly
                 ? (details) => _addPin(details.localPosition)
                 : null,
             child: ColorFiltered(
@@ -95,7 +98,7 @@ class MapPageParentState extends State<MapPageParent> {
               top: position.dy,
               child: GestureDetector(
                 onTap: () {
-                  // Remove pin on tap
+                  if (widget.readonly) return;
                   setState(() {
                     pinPositions.remove(position);
                   });
@@ -106,18 +109,20 @@ class MapPageParentState extends State<MapPageParent> {
           }),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.black,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: _toggleMapColor,
-            child: Text(isBlackAndWhite
-                ? 'Switch to Color Map'
-                : 'Switch to Black & White Map'),
-          ),
-        ),
-      ),
+      bottomNavigationBar: widget.readonly
+          ? null
+          : BottomAppBar(
+              color: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: _toggleMapColor,
+                  child: Text(isBlackAndWhite
+                      ? 'Switch to Color Map'
+                      : 'Switch to Black & White Map'),
+                ),
+              ),
+            ),
     );
   }
 }
