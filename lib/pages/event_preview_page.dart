@@ -3,17 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:theft_app/event_data.dart';
 
-class EventDetailsPage extends StatefulWidget {
+
+class EventPreviewPage extends StatefulWidget {
   final Event event;
 
-  const EventDetailsPage({super.key, required this.event});
+  const EventPreviewPage({super.key, required this.event});
 
   @override
-  EventDetailsPageState createState() => EventDetailsPageState();
+  EventPreviewPageState createState() => EventPreviewPageState();
 }
 
-class EventDetailsPageState extends State<EventDetailsPage> {
-  bool _isImported = false; // Track if the event is imported by the user
+class EventPreviewPageState extends State<EventPreviewPage> {
+  bool _isImported = false;
 
   @override
   void initState() {
@@ -21,7 +22,6 @@ class EventDetailsPageState extends State<EventDetailsPage> {
     _checkIfEventIsImported();
   }
 
-  // Check Firestore to see if the event has already been imported
   Future<void> _checkIfEventIsImported() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
@@ -33,35 +33,45 @@ class EventDetailsPageState extends State<EventDetailsPage> {
     if (docSnapshot.exists) {
       final importedEvents = List<String>.from(docSnapshot['importedEvents']);
       setState(() {
-        _isImported = importedEvents
-            .contains(widget.event.name); // Use event name as unique ID
+        _isImported = importedEvents.contains(widget.event.name);
       });
     }
   }
 
-  // Import the event to Firestore
   Future<void> _importEvent() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
     final userDocRef =
         FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    
+    try {
+      // Ensure the event exists in Firestore
+      await ensureEventExists(widget.event.name, widget.event.mapUrl);
 
-    // Ensure document exists, then add event to importedEvents array
-    await userDocRef.set({
-      'importedEvents': FieldValue.arrayUnion([widget.event.name]),
-    }, SetOptions(merge: true));
+      // Add the event to the user's imported events
+      await userDocRef.set({
+        'importedEvents': FieldValue.arrayUnion([widget.event.name]),
+      }, SetOptions(merge: true));
 
-    setState(() {
-      _isImported = true;
-    });
+      setState(() {
+        _isImported = true;
+      });
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                '${widget.event.name} has been imported to your upcoming events!')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${widget.event.name} has been imported to your upcoming events!'),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error importing event: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to import event: $e')),
+        );
+      }
     }
   }
 
@@ -72,7 +82,6 @@ class EventDetailsPageState extends State<EventDetailsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Event Details
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -89,11 +98,9 @@ class EventDetailsPageState extends State<EventDetailsPage> {
               textAlign: TextAlign.center,
             ),
           ),
-          // Map Preview
           Expanded(
-            child: Image.network(widget.event.mapUrl)
+            child: Image.network(widget.event.mapUrl),
           ),
-          // Import Button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
