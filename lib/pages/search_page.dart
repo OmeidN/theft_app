@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:theft_app/event_data.dart';
-import 'package:theft_app/pages/event_details_page.dart';
+import 'package:theft_app/pages/event_preview_page.dart';
 
 class SearchPage extends StatefulWidget {
   final List<Event> events;

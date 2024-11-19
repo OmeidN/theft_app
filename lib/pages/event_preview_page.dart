@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:theft_app/mapPages/map_page_parent.dart';
 import 'package:theft_app/event_data.dart';
 
 class EventDetailsPage extends StatefulWidget {
-  final Event event; // The event to display details for
+  final Event event;
 
   const EventDetailsPage({super.key, required this.event});
 
@@ -69,27 +68,10 @@ class EventDetailsPageState extends State<EventDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.event.name),
-      ),
+      appBar: AppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Event Logo
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                widget.event.logoUrl,
-                height: 150,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 100);
-                },
-              ),
-            ),
-          ),
           // Event Details
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -109,11 +91,7 @@ class EventDetailsPageState extends State<EventDetailsPage> {
           ),
           // Map Preview
           Expanded(
-            child: MapPageParent(
-              eventName: widget.event.name,
-              mapUrl: widget.event.mapUrl,
-              readonly: true, // Set to true to disable interaction
-            ),
+            child: Image.network(widget.event.mapUrl)
           ),
           // Import Button
           Padding(
