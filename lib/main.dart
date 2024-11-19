@@ -10,7 +10,6 @@ import 'pages/profile_page.dart';
 import 'package:logger/logger.dart';
 import 'package:theft_app/event_data.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -67,22 +66,18 @@ class MainPageState extends State<MainPage> {
 
   late List<Widget> _pages;
 
-  // Master event list (all other classes that need it are passed this from main)
-
-
   // Pages with index selector
 
-@override
-void initState() {
-  super.initState();
-  _pages = [
-    const UpcomingEventsPage(), // Remove the events parameter here
-    SearchPage(events: events), // Keep this as it is
-    const Page3(),
-    const ProfilePage(),
-  ];
-}
-
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const UpcomingEventsPage(), // Remove the events parameter here
+      SearchPage(events: events), // Keep this as it is
+      const Page3(),
+      const ProfilePage(),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {

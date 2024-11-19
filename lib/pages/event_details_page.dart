@@ -7,13 +7,13 @@ import 'package:theft_app/event_data.dart';
 class EventDetailsPage extends StatefulWidget {
   final Event event; // The event to display details for
 
-  const EventDetailsPage({Key? key, required this.event}) : super(key: key);
+  const EventDetailsPage({super.key, required this.event});
 
   @override
-  _EventDetailsPageState createState() => _EventDetailsPageState();
+  EventDetailsPageState createState() => EventDetailsPageState();
 }
 
-class _EventDetailsPageState extends State<EventDetailsPage> {
+class EventDetailsPageState extends State<EventDetailsPage> {
   bool _isImported = false; // Track if the event is imported by the user
 
   @override
@@ -27,13 +27,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    final userDocRef = FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    final userDocRef =
+        FirebaseFirestore.instance.collection('user_imports').doc(userId);
     final docSnapshot = await userDocRef.get();
 
     if (docSnapshot.exists) {
       final importedEvents = List<String>.from(docSnapshot['importedEvents']);
       setState(() {
-        _isImported = importedEvents.contains(widget.event.name); // Use event name as unique ID
+        _isImported = importedEvents
+            .contains(widget.event.name); // Use event name as unique ID
       });
     }
   }
@@ -43,7 +45,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    final userDocRef = FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    final userDocRef =
+        FirebaseFirestore.instance.collection('user_imports').doc(userId);
 
     // Ensure document exists, then add event to importedEvents array
     await userDocRef.set({
@@ -54,9 +57,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       _isImported = true;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${widget.event.name} has been imported to your upcoming events!')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                '${widget.event.name} has been imported to your upcoming events!')),
+      );
+    }
   }
 
   @override

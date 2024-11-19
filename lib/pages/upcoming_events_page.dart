@@ -5,13 +5,13 @@ import 'package:theft_app/event_data.dart'; // Import the global events list
 import 'package:theft_app/mapPages/map_page_parent.dart';
 
 class UpcomingEventsPage extends StatefulWidget {
-  const UpcomingEventsPage({Key? key}) : super(key: key);
+  const UpcomingEventsPage({super.key});
 
   @override
-  _UpcomingEventsPageState createState() => _UpcomingEventsPageState();
+  UpcomingEventsPageState createState() => UpcomingEventsPageState();
 }
 
-class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
+class UpcomingEventsPageState extends State<UpcomingEventsPage> {
   List<Event> importedEvents = [];
 
   @override
@@ -25,14 +25,16 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    final userDocRef = FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    final userDocRef =
+        FirebaseFirestore.instance.collection('user_imports').doc(userId);
     final docSnapshot = await userDocRef.get();
 
     if (docSnapshot.exists) {
       final eventNames = List<String>.from(docSnapshot['importedEvents']);
       setState(() {
         importedEvents = eventNames
-            .map((name) => events.firstWhere((e) => e.name == name)) // Use global 'events' list
+            .map((name) => events
+                .firstWhere((e) => e.name == name)) // Use global 'events' list
             .toList();
       });
     }
@@ -43,7 +45,8 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    final userDocRef = FirebaseFirestore.instance.collection('user_imports').doc(userId);
+    final userDocRef =
+        FirebaseFirestore.instance.collection('user_imports').doc(userId);
     await userDocRef.update({
       'importedEvents': FieldValue.arrayRemove([event.name]),
     });
@@ -51,10 +54,13 @@ class _UpcomingEventsPageState extends State<UpcomingEventsPage> {
     setState(() {
       importedEvents.remove(event);
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${event.name} has been removed from your upcoming events.')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                '${event.name} has been removed from your upcoming events.')),
+      );
+    }
   }
 
   @override

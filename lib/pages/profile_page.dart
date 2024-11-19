@@ -6,7 +6,7 @@ final logger = Logger();
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;

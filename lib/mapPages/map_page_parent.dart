@@ -7,12 +7,12 @@ class MapPageParent extends StatefulWidget {
   final bool readonly; // Add readonly parameter to control interactivity
 
   const MapPageParent({
-    Key? key,
+    super.key,
     required this.eventName,
     required this.mapUrl,
     this.initialPins,
     this.readonly = false, // Default to false for interactive mode
-  }) : super(key: key);
+  });
 
   @override
   MapPageParentState createState() => MapPageParentState();
@@ -48,7 +48,9 @@ class MapPageParentState extends State<MapPageParent> {
   }
 
   void _togglePinPlacement() {
-    if (widget.readonly) return; // Prevent enabling pin placement in read-only mode
+    if (widget.readonly) {
+      return; // Prevent enabling pin placement in read-only mode
+    }
     setState(() {
       canPlacePin = !canPlacePin;
     });
