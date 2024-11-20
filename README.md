@@ -1,16 +1,17 @@
 # theft_app
 
-A new Flutter project.
+TheftApp is a Flutter-based mobile application designed to help users monitor, report, and track theft incidents in their community. With its seamless integration with Firebase, the app provides real-time updates, location-based incident tracking, and user-friendly event reporting.
 
-## Getting Started
+Features:
 
-This project is a starting point for a Flutter application.
+User Authentication: Secure login and account management using Firebase Authentication.
 
-A few resources to get you started if this is your first Flutter project:
+Report Theft Incidents: Users can report theft incidents with detailed descriptions, timestamps, and locations.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Map Integration: Interactive maps to visualize reported incidents, powered by Google Maps API.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Search and Filter Events: Easily search for specific incidents and filter by date, type, or location.
+
+Upcoming Events: Stay informed about community safety events and awareness programs.
+
+Profile Management: Edit and manage user profiles for a personalized experience.
