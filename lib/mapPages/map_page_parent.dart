@@ -7,14 +7,14 @@ class MapPageParent extends StatefulWidget {
   final String eventName;
   final String mapUrl;
   final List<Offset>? initialPins;
-  final bool readonly;
+  final bool readonly; // Add readonly parameter to control interactivity
 
   const MapPageParent({
     super.key,
     required this.eventName,
     required this.mapUrl,
     this.initialPins,
-    this.readonly = false,
+    this.readonly = false, // Default to false for interactive mode
   });
 
   @override
@@ -58,38 +58,33 @@ class MapPageParentState extends State<MapPageParent> {
     }
   }
 
-  void _listenForPinUpdates() {
-    FirebaseFirestore.instance
-        .collection('events')
-        .doc(widget.eventName)
-        .collection('pins')
-        .snapshots()
-        .listen((snapshot) {
-      setState(() {
-        pinPositions = snapshot.docs.map((doc) {
-          final data = doc.data();
-          return Offset(data['x'] as double, data['y'] as double);
-        }).toList();
-      });
-
-      logger.i('Real-time pin updates received.');
+void _listenForPinUpdates() {
+  FirebaseFirestore.instance
+      .collection('events')
+      .doc(widget.eventName)
+      .collection('pins')
+      .snapshots()
+      .listen((snapshot) {
+    setState(() {
+      pinPositions = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return Offset(data['x'] as double, data['y'] as double);
+      }).toList();
     });
-  }
+
+    logger.i('Real-time pin updates received.');
+  }, onError: (error) {
+    logger.e('Error in Firestore listener: $error');
+  });
+}
+
 
   void _addPin(Offset position) async {
     if (widget.readonly) return; // Prevent adding pins in read-only mode
 
     setState(() {
-      const double pinWidth = 30.0;
-      const double pinHeight = 30.0;
-
-      final adjustedPosition = Offset(
-        position.dx - pinWidth / 2,
-        position.dy - pinHeight / 2,
-      );
-
-      pinPositions.add(adjustedPosition);
-      canPlacePin = false;
+      pinPositions.add(position); // Add the raw position to the list
+      canPlacePin = false; // Disable further pin placement
     });
 
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -114,44 +109,40 @@ class MapPageParentState extends State<MapPageParent> {
     }
   }
 
-void _removePin(Offset position) async {
-  if (widget.readonly) return;
+  void _removePin(Offset position) async {
+    if (widget.readonly) return;
 
-  // Fetch the currently authenticated user's UID
-  final userId = FirebaseAuth.instance.currentUser?.uid;
-  if (userId == null) return;
+    // Fetch the currently authenticated user's UID
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
 
-  try {
-    final eventDocRef =
-        FirebaseFirestore.instance.collection('events').doc(widget.eventName);
+    try {
+      final eventDocRef =
+          FirebaseFirestore.instance.collection('events').doc(widget.eventName);
+      final pinQuery = await eventDocRef
+          .collection('pins')
+          .where('x', isEqualTo: position.dx)
+          .where('y', isEqualTo: position.dy)
+          .get();
 
-    // Query Firestore to find the pin at the given position
-    final pinQuery = await eventDocRef
-        .collection('pins')
-        .where('x', isEqualTo: position.dx)
-        .where('y', isEqualTo: position.dy)
-        .get();
-
-    for (var doc in pinQuery.docs) {
-      // Check if the pin's `userId` matches the current user's UID
-      if (doc.data()['userId'] == userId) {
-        await doc.reference.delete(); // Allow deletion
-        logger.i('Pin removed successfully from Firestore.');
-        setState(() {
-          pinPositions.remove(position); // Remove the pin locally
-        });
-      } else {
-        logger.w('Unauthorized attempt to remove another user\'s pin.');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('You can only remove pins you placed.')),
-        );
+      for (var doc in pinQuery.docs) {
+        if (doc.data()['userId'] == userId) {
+          await doc.reference.delete(); // Allow deletion
+          logger.i('Pin removed successfully from Firestore.');
+          setState(() {
+            pinPositions.remove(position); // Remove the pin locally
+          });
+        } else {
+          logger.w('Unauthorized attempt to remove another user\'s pin.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('You can only remove pins you placed.')),
+          );
+        }
       }
+    } catch (e) {
+      logger.e('Error removing pin from Firestore', e);
     }
-  } catch (e) {
-    logger.e('Error removing pin from Firestore', e);
   }
-}
-
 
   void _togglePinPlacement() {
     if (widget.readonly) {
@@ -202,8 +193,8 @@ void _removePin(Offset position) async {
           ),
           ...pinPositions.map((position) {
             return Positioned(
-              left: position.dx,
-              top: position.dy,
+              left: position.dx - 15.0, // Adjust for pin size (30x30)
+              top: position.dy - 15.0,  // Adjust for pin size (30x30)
               child: GestureDetector(
                 onTap: () {
                   _removePin(position); // Call the updated method
