@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:theft_app/event_data.dart';
-
+import 'package:logger/logger.dart';
 
 class EventPreviewPage extends StatefulWidget {
   final Event event;
@@ -41,10 +41,11 @@ class EventPreviewPageState extends State<EventPreviewPage> {
   Future<void> _importEvent() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
+    var logger = Logger();
 
     final userDocRef =
         FirebaseFirestore.instance.collection('user_imports').doc(userId);
-    
+
     try {
       // Ensure the event exists in Firestore
       await ensureEventExists(widget.event.name, widget.event.mapUrl);
@@ -61,12 +62,13 @@ class EventPreviewPageState extends State<EventPreviewPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${widget.event.name} has been imported to your upcoming events!'),
+            content: Text(
+                '${widget.event.name} has been imported to your upcoming events!'),
           ),
         );
       }
     } catch (e) {
-      print('Error importing event: $e');
+      logger.e('Error importing event');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to import event: $e')),

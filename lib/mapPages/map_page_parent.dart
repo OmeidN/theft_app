@@ -58,26 +58,25 @@ class MapPageParentState extends State<MapPageParent> {
     }
   }
 
-void _listenForPinUpdates() {
-  FirebaseFirestore.instance
-      .collection('events')
-      .doc(widget.eventName)
-      .collection('pins')
-      .snapshots()
-      .listen((snapshot) {
-    setState(() {
-      pinPositions = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return Offset(data['x'] as double, data['y'] as double);
-      }).toList();
+  void _listenForPinUpdates() {
+    FirebaseFirestore.instance
+        .collection('events')
+        .doc(widget.eventName)
+        .collection('pins')
+        .snapshots()
+        .listen((snapshot) {
+      setState(() {
+        pinPositions = snapshot.docs.map((doc) {
+          final data = doc.data();
+          return Offset(data['x'] as double, data['y'] as double);
+        }).toList();
+      });
+
+      logger.i('Real-time pin updates received.');
+    }, onError: (error) {
+      logger.e('Error in Firestore listener: $error');
     });
-
-    logger.i('Real-time pin updates received.');
-  }, onError: (error) {
-    logger.e('Error in Firestore listener: $error');
-  });
-}
-
+  }
 
   void _addPin(Offset position) async {
     if (widget.readonly) return; // Prevent adding pins in read-only mode
@@ -134,9 +133,12 @@ void _listenForPinUpdates() {
           });
         } else {
           logger.w('Unauthorized attempt to remove another user\'s pin.');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('You can only remove pins you placed.')),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('You can only remove pins you placed.')),
+            );
+          }
         }
       }
     } catch (e) {
@@ -194,7 +196,7 @@ void _listenForPinUpdates() {
           ...pinPositions.map((position) {
             return Positioned(
               left: position.dx - 15.0, // Adjust for pin size (30x30)
-              top: position.dy - 15.0,  // Adjust for pin size (30x30)
+              top: position.dy - 15.0, // Adjust for pin size (30x30)
               child: GestureDetector(
                 onTap: () {
                   _removePin(position); // Call the updated method
