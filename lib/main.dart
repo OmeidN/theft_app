@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'pages/upcoming_events_page.dart';
 import 'pages/search_page.dart';
-import 'pages/page3.dart';
+import 'pages/notifications_page.dart';
 import 'pages/login_page.dart';
 import 'pages/profile_page.dart';
 import 'package:logger/logger.dart';
@@ -71,7 +71,7 @@ class MainPageState extends State<MainPage> {
     _pages = [
       const UpcomingEventsPage(), // Remove the events parameter here
       SearchPage(events: events), // Keep this as it is
-      const Page3(),
+      NotificationsPage(),
       const ProfilePage(),
     ];
   }
