@@ -79,32 +79,61 @@ class MapPageParentState extends State<MapPageParent> {
   }
 
   void _addPin(Offset position) async {
-    if (widget.readonly) return; // Prevent adding pins in read-only mode
-
-    setState(() {
-      pinPositions.add(position); // Add the raw position to the list
-      canPlacePin = false; // Disable further pin placement
-    });
-
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return;
-
-    final pinData = {
-      'x': position.dx,
-      'y': position.dy,
-      'userId': userId,
-      'timestamp': FieldValue.serverTimestamp(),
-    };
+    if (canPlacePin == false) return;
 
     try {
-      await FirebaseFirestore.instance
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        logger.e('User is not authenticated');
+        return;
+      }
+
+      // Adjust pin position
+      const double pinWidth = 30.0;
+      const double pinHeight = 30.0;
+      final adjustedPosition = Offset(
+        position.dx - pinWidth / 2,
+        position.dy - pinHeight / 2,
+      );
+
+      setState(() {
+        pinPositions.add(adjustedPosition);
+        canPlacePin = false;
+      });
+
+      final pinDocRef = FirebaseFirestore.instance
           .collection('events')
           .doc(widget.eventName)
           .collection('pins')
-          .add(pinData);
-      logger.i('Pin added successfully to Firestore.');
+          .doc();
+
+      // Write the pin to Firestore
+      await pinDocRef.set({
+        'x': position.dx,
+        'y': position.dy,
+        'userId': userId,
+        'timestamp': Timestamp.now(),
+      });
+
+      logger.i('Pin added successfully.');
+
+      // Write the notification to Firestore
+      final notificationRef = FirebaseFirestore.instance
+          .collection('events')
+          .doc(widget.eventName)
+          .collection('notifications')
+          .doc();
+
+      await notificationRef.set({
+        'message': 'A new pin was added to ${widget.eventName}!',
+        'timestamp': Timestamp.now(),
+        'userId': userId,
+        'eventName': widget.eventName,
+      });
+
+      logger.i('Notification created successfully.');
     } catch (e) {
-      logger.e('Error adding pin to Firestore', e);
+      logger.e('Error adding pin or notification: $e');
     }
   }
 
