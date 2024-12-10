@@ -21,75 +21,57 @@ class NotificationsPageState extends State<NotificationsPage> {
     _fetchNotifications();
   }
 
-Future<void> _fetchNotifications() async {
-  setState(() {
-    isLoading = true; // Show loading spinner
-  });
-
+  Future<void> _fetchNotifications() async {
   try {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) {
       logger.e('User is not authenticated');
-      setState(() {
-        isLoading = false;
-      });
       return;
     }
 
     logger.i('Fetching imported events for user: $userId');
 
-    // Fetch imported events for the user
+    // Fetch imported events
     final importsSnapshot = await FirebaseFirestore.instance
         .collection('user_imports')
         .doc(userId)
         .get();
 
-    final List<String> importedEventNames =
-        List<String>.from(importsSnapshot['importedEvents'] ?? []);
+    final List<String> importedEvents = List<String>.from(
+      importsSnapshot.data()?['importedEvents'] ?? [],
+    );
 
-    if (importedEventNames.isEmpty) {
-      logger.i('No imported events found for user: $userId');
-      setState(() {
-        notifications.clear();
-        isLoading = false;
-      });
-      return;
+    logger.i('User has imported events: $importedEvents');
+
+    final List<Map<String, dynamic>> fetchedNotifications = [];
+    for (String eventId in importedEvents) {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('events')
+          .doc(eventId)
+          .collection('notifications')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      fetchedNotifications.addAll(
+        querySnapshot.docs.map((doc) => doc.data()),
+      );
     }
-
-    logger.i('User has imported events: $importedEventNames');
-
-    // Fetch notifications for the imported events
-    final querySnapshot = await FirebaseFirestore.instance
-        .collectionGroup('notifications')
-        .where('eventName', whereIn: importedEventNames) // Query by eventName
-        .orderBy('timestamp', descending: true)
-        .get();
-
-    final List<Map<String, dynamic>> fetchedNotifications =
-        querySnapshot.docs.map((doc) {
-      final data = doc.data();
-      return {
-        'eventName': data['eventName'] ?? 'Unknown Event',
-        'message': data['message'] ?? 'No message provided',
-        'timestamp': data['timestamp']?.toDate() ?? DateTime.now(),
-        'userId': data['userId'] ?? 'Unknown',
-      };
-    }).toList();
 
     setState(() {
       notifications.clear();
       notifications.addAll(fetchedNotifications);
-      isLoading = false;
     });
 
     logger.i('Fetched ${notifications.length} notifications.');
   } catch (e) {
     logger.e('Error fetching notifications: $e');
-    setState(() {
-      isLoading = false;
-    });
   }
+  setState(() {
+      isLoading = false; // Stop spinner
+    });
 }
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -69,8 +69,8 @@ class MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pages = [
-      const UpcomingEventsPage(), // Remove the events parameter here
-      SearchPage(events: events), // Keep this as it is
+      const UpcomingEventsPage(),
+      SearchPage(events: events),
       NotificationsPage(),
       const ProfilePage(),
     ];
