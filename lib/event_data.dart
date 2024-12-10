@@ -1,5 +1,3 @@
- import 'package:cloud_firestore/cloud_firestore.dart';
- import 'package:logger/logger.dart';
 
 class Event {
   final String name;
@@ -46,21 +44,3 @@ final List<Event> events = [
         'https://preview.redd.it/maps-are-here-v0-em31yzdd6aob1.jpg?width=1080&crop=smart&auto=webp&s=c70648e277732f40824309e465f94c2f900a043b',
   )
 ];
-
-// Ensure the event exists in Firestore
-Future<void> ensureEventExists(String eventName, String mapUrl) async {
-  final eventDocRef = FirebaseFirestore.instance.collection('events').doc(eventName);
-  var logger = Logger();
-
-  try {
-    final eventSnapshot = await eventDocRef.get();
-    if (!eventSnapshot.exists) {
-      await eventDocRef.set({
-        'mapUrl': mapUrl,
-      });
-      logger.i('Event $eventName created successfully.');
-    }
-  } catch (e) {
-    logger.e('Error ensuring event exists');
-  }
-}

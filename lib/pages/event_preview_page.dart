@@ -47,9 +47,7 @@ class EventPreviewPageState extends State<EventPreviewPage> {
         FirebaseFirestore.instance.collection('user_imports').doc(userId);
 
     try {
-      // Ensure the event exists in Firestore
-      await ensureEventExists(widget.event.name, widget.event.mapUrl);
-
+      
       // Add the event to the user's imported events
       await userDocRef.set({
         'importedEvents': FieldValue.arrayUnion([widget.event.name]),
