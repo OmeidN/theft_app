@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
+import 'dart:async';
 
 class MapPageParent extends StatefulWidget {
   final String eventName;
@@ -58,24 +59,31 @@ class MapPageParentState extends State<MapPageParent> {
     }
   }
 
+  StreamSubscription? _pinUpdatesSubscription;
+
   void _listenForPinUpdates() {
-    FirebaseFirestore.instance
+    _pinUpdatesSubscription = FirebaseFirestore.instance
         .collection('events')
         .doc(widget.eventName)
         .collection('pins')
         .snapshots()
         .listen((snapshot) {
-      setState(() {
-        pinPositions = snapshot.docs.map((doc) {
-          final data = doc.data();
-          return Offset(data['x'] as double, data['y'] as double);
-        }).toList();
-      });
-
-      logger.i('Real-time pin updates received.');
-    }, onError: (error) {
-      logger.e('Error in Firestore listener: $error');
+      if (mounted) {
+        setState(() {
+          // Update pin positions
+          pinPositions = snapshot.docs.map((doc) {
+            final data = doc.data();
+            return Offset(data['x'], data['y']);
+          }).toList();
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _pinUpdatesSubscription?.cancel(); // Cancel the subscription
+    super.dispose();
   }
 
   void _addPin(Offset position) async {
@@ -157,9 +165,24 @@ class MapPageParentState extends State<MapPageParent> {
         if (doc.data()['userId'] == userId) {
           await doc.reference.delete(); // Allow deletion
           logger.i('Pin removed successfully from Firestore.');
-          setState(() {
-            pinPositions.remove(position); // Remove the pin locally
-          });
+          if (mounted) {
+            setState(() {
+              pinPositions.remove(position); // Remove the pin locally
+            });
+          }
+
+          // Also delete the associated notification
+          final notificationQuery = await eventDocRef
+              .collection('notifications')
+              .where('userId', isEqualTo: userId)
+              .where('message',
+                  isEqualTo: 'A new pin was added to ${widget.eventName}!')
+              .get();
+
+          for (var notificationDoc in notificationQuery.docs) {
+            await notificationDoc.reference.delete();
+            logger.i('Notification associated with the pin removed.');
+          }
         } else {
           logger.w('Unauthorized attempt to remove another user\'s pin.');
           if (mounted) {
