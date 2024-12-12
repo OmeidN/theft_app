@@ -59,7 +59,7 @@ class ProfilePage extends StatelessWidget {
     try {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
-      logger.e("Logout failed", e);
+      logger.e("Logout failed");
     }
   }
 }

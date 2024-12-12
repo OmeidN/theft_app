@@ -55,7 +55,7 @@ class MapPageParentState extends State<MapPageParent> {
 
       logger.i('Pins fetched successfully from Firestore.');
     } catch (e) {
-      logger.e('Error fetching pins from Firestore', e);
+      logger.e('Error fetching pins from Firestore');
     }
   }
 
@@ -194,7 +194,7 @@ class MapPageParentState extends State<MapPageParent> {
         }
       }
     } catch (e) {
-      logger.e('Error removing pin from Firestore', e);
+      logger.e('Error removing pin from Firestore');
     }
   }
 
