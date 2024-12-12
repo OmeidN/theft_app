@@ -133,7 +133,7 @@ class MapPageParentState extends State<MapPageParent> {
           .doc();
 
       await notificationRef.set({
-        'message': 'A new pin was added to ${widget.eventName}!',
+        'message': 'Phone theft reported at ${widget.eventName}',
         'timestamp': Timestamp.now(),
         'userId': userId,
         'eventName': widget.eventName,
