@@ -22,59 +22,66 @@ class NotificationsPageState extends State<NotificationsPage> {
     _fetchNotifications();
   }
 
-  Future<void> _fetchNotifications() async {
-    try {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      if (userId == null) {
-        logger.e('User is not authenticated');
-        return;
-      }
+Future<void> _fetchNotifications() async {
+  try {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      logger.e('User is not authenticated');
+      return;
+    }
 
-      logger.i('Fetching imported events for user: $userId');
+    logger.i('Fetching imported events for user: $userId');
 
-      // Fetch imported events
-      final importsSnapshot = await FirebaseFirestore.instance
-          .collection('user_imports')
-          .doc(userId)
+    // Fetch imported events
+    final importsSnapshot = await FirebaseFirestore.instance
+        .collection('user_imports')
+        .doc(userId)
+        .get();
+
+    final List<String> importedEvents = List<String>.from(
+      importsSnapshot.data()?['importedEvents'] ?? [],
+    );
+
+    logger.i('User has imported events: $importedEvents');
+
+    final List<Map<String, dynamic>> fetchedNotifications = [];
+
+    for (String eventId in importedEvents) {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('events')
+          .doc(eventId)
+          .collection('notifications')
           .get();
 
-      final List<String> importedEvents = List<String>.from(
-        importsSnapshot.data()?['importedEvents'] ?? [],
+      fetchedNotifications.addAll(
+        querySnapshot.docs.map((doc) {
+          final data = doc.data();
+          data['timestamp'] = (data['timestamp'] as Timestamp).toDate();
+          return data;
+        }),
       );
-
-      logger.i('User has imported events: $importedEvents');
-
-      final List<Map<String, dynamic>> fetchedNotifications = [];
-      for (String eventId in importedEvents) {
-        final querySnapshot = await FirebaseFirestore.instance
-            .collection('events')
-            .doc(eventId)
-            .collection('notifications')
-            .orderBy('timestamp', descending: true)
-            .get();
-
-        fetchedNotifications.addAll(
-          querySnapshot.docs.map((doc) {
-            final data = doc.data();
-            data['timestamp'] = (data['timestamp'] as Timestamp).toDate();
-            return data;
-          }),
-        );
-      }
-
-      setState(() {
-        notifications.clear();
-        notifications.addAll(fetchedNotifications);
-      });
-
-      logger.i('Fetched ${notifications.length} notifications.');
-    } catch (e) {
-      logger.e('Error fetching notifications: $e');
     }
-    setState(() {
-      isLoading = false; // Stop spinner
+
+    // Sort notifications globally by timestamp in descending order
+    fetchedNotifications.sort((a, b) {
+      final timestampA = a['timestamp'] as DateTime;
+      final timestampB = b['timestamp'] as DateTime;
+      return timestampB.compareTo(timestampA);
     });
+
+    setState(() {
+      notifications.clear();
+      notifications.addAll(fetchedNotifications);
+    });
+
+    logger.i('Fetched ${notifications.length} notifications.');
+  } catch (e) {
+    logger.e('Error fetching notifications: $e');
   }
+  setState(() {
+    isLoading = false; // Stop spinner
+  });
+}
 
   @override
   Widget build(BuildContext context) {
