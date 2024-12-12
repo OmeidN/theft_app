@@ -83,7 +83,7 @@ Future<void> _fetchNotifications() async {
   });
 }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Notifications')),
@@ -95,13 +95,29 @@ Future<void> _fetchNotifications() async {
                   itemCount: notifications.length,
                   itemBuilder: (context, index) {
                     final notification = notifications[index];
-                    final DateTime timestamp = notification['timestamp'];
-                    final String formattedTimestamp =
-                        DateFormat('MMMM dd, yyyy h:mm a').format(timestamp);
+                    IconData notificationIcon = Icons.warning_rounded;
                     return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: const Color.fromARGB(255, 212, 78, 37),
+                        child: Icon(notificationIcon, color: Colors.white),
+                      ),
                       title: Text(notification['message']),
-                      subtitle: Text(
-                          '${notification['eventName']} • $formattedTimestamp'),
+                      subtitle: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${DateFormat.yMMMd().format(notification['timestamp'])} • ',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            TextSpan(
+                              text: DateFormat.Hm().format(notification['timestamp']),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),
